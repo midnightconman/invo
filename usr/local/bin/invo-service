@@ -1,0 +1,93 @@
+#!/bin/bash
+
+# invo-service - A service wrapper for invo services
+
+usage ()
+{
+
+    echo -en "\n"
+    echo -en "invo-service <service-name> <action>\n"
+    echo -en "\n"
+    echo -en "    <service-name> can be one of the following:\n"
+    echo -en "        * redis-master\n"
+    echo -en "        * redis-slave\n"
+    echo -en "        * haproxy-nginx\n"
+    echo -en "        * haproxy-redis\n"
+    echo -en "        * nginx\n"
+    echo -en "\n"
+    echo -en "    <action> can be: start | stop | restart\n"
+    echo -en "\n"
+    echo -en "\n"
+
+}
+
+if [ -z $2 ]
+then 
+    usage
+fi
+
+SERVICE=$( echo $1 | tr '[A-Z]' '[a-z]' )
+ACTION=$( echo $2 | tr '[A-Z]' '[a-z]' )
+
+case "$SERVICE" in 
+    "redis-master" )
+        PID=$( cat /usr/local/var/run/invo/${SERVICE}.pid )
+        BIN="/usr/local/bin/redis-server /etc/invo/${SERVICE}.conf"
+    ;;
+
+    "redis-slave" )
+        PID=$( cat /usr/local/var/run/invo/${SERVICE}.pid )
+        BIN="/usr/local/bin/redis-server /etc/invo/${SERVICE}.conf"
+    ;;
+
+    "haproxy-nginx" )
+        PID=$( cat /usr/local/var/run/invo/${SERVICE}.pid )
+        BIN="/usr/local/bin/haproxy -f /etc/invo/${SERVICE}.conf"
+    ;;
+
+    "haproxy-redis" )
+        PID=$( cat /usr/local/var/run/invo/${SERVICE}.pid )
+        BIN="/usr/local/bin/haproxy -f /etc/invo/${SERVICE}.conf"
+    ;;
+
+    "nginx" )
+        PID=$( cat /usr/local/var/run/invo/${SERVICE}.pid )
+        BIN="/usr/local/nginx/sbin/nginx -c /usr/local/nginx/conf/${SERVICE}.conf"
+    ;;
+
+    * )
+        usage
+    ;;
+
+esac
+
+
+case "$ACTION" in 
+    "stop" )
+        echo -en "Stopping ${SERVICE}...\n"
+        kill $PID
+        exit $?
+    ;;
+
+    "start" )
+        echo -en "Starting ${SERVICE}...\n"
+       $BIN
+        exit $?
+    ;;
+
+    "restart" )
+        echo -en "Stopping ${SERVICE}...\n"
+        kill $PID
+        sleep 3
+        echo -en "Starting ${SERVICE}...\n"
+        $BIN
+        exit $?
+    ;;
+
+    * )
+        usage
+    ;;
+
+esac
+
+exit 0

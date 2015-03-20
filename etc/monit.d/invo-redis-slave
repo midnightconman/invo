@@ -1,0 +1,10 @@
+check process invo-redis-slave with pidfile "/var/run/invo/redis-slave.pid"
+    start = "/usr/local/bin/invo-service redis-slave start"
+    stop = "/usr/local/bin/invo-service redis-slave stop"
+    if failed host 127.0.0.2 port 6381 then restart
+    if failed host 127.0.0.3 port 6381 then restart
+    if failed host 127.0.0.4 port 6381 then restart
+    if failed host 127.0.0.5 port 6381 then restart
+    if failed host 127.0.0.6 port 6381 then restart
+    if cpu usage > 98% for 10 cycles then restart
+    if 5 restarts within 5 cycles then alert
