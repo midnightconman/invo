@@ -1,7 +1,7 @@
 INVO is an Inventory robot that keeps track of your hosts in a simple RESTful
 fashion. INVO is a very simple CMDB that features namespaces, roles, and hosts
 and allows this information to be access via a simple RESTful API. INVO uses
-OpenResty and MySQL in its current iteration.
+OpenResty and redis in its current iteration.
 
 Required Packages:
   * ngx_openresty
@@ -19,16 +19,14 @@ Required Directories and Files:
 
 Redis Schema:
     * (Namespaces) [Set]: namespaces
-      * members: quoteminer
-      * members: niteanddayhosting
-      * members: midnightconman
+      * members: yourdomain
 
-    * (Roles / Hosts) [Key / String]: niteanddayhosting.hgp-fe.env-prod.loc-ca1
+    * (Roles / Hosts) [Key / String]: yournamespace.hgp-fe.env-prod.loc-ca1
       * Can include static hostnames
       * Can include other roles
-      * Can include host ranges ( something like cow[1-15,35-50,61].ca1.niteanddayhosting.com )
+      * Can include host ranges ( something like cow[1-15,35-50,61].ca1.yourdomain.com )
 
-    * (Host) [Hash]: cow5.ca1.niteanddayhosting.com
+    * (Host) [Hash]: cow5.ca1.yourdomain.com
       * Can include hosts MAC address
       * Can include hosts IP address
       * Can include hosts service tag
